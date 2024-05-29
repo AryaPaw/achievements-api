@@ -57,3 +57,7 @@ class PointDifferenceResponse(BaseModel):
 
 class ConsistentAchievementsResponse(BaseModel):
     consistent_users: List[str]
+
+class MinPointDifferenceResponse(BaseModel):
+    users: List[str]
+    point_difference: int

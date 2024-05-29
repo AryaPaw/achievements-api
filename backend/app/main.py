@@ -67,6 +67,14 @@ async def users_with_max_point_difference(db: AsyncSession = Depends(get_db)):
     max_diff = max_user.total_points - min_user.total_points
     return {"users": [max_user.username, min_user.username], "point_difference": max_diff}
 
+@app.get("/statistics/min-point-difference", response_model=schemas.MinPointDifferenceResponse, tags=["Statistics"])
+async def users_with_min_point_difference(db: AsyncSession = Depends(get_db)):
+    user1, user2 = await crud.users_with_min_point_difference(db=db)
+    if not user1 or not user2:
+        raise HTTPException(status_code=404, detail="Not enough users found")
+    min_diff = abs(user1.total_points - user2.total_points)
+    return {"users": [user1.username, user2.username], "point_difference": min_diff}
+
 @app.get("/statistics/consistent-achievements", response_model=schemas.ConsistentAchievementsResponse, tags=["Statistics"])
 async def users_with_consistent_achievements(db: AsyncSession = Depends(get_db)):
     consistent_users = await crud.users_with_consistent_achievements(db=db)

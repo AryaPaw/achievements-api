@@ -73,6 +73,21 @@ async def users_with_max_point_difference(db: AsyncSession):
     users.sort(key=lambda x: x.total_points, reverse=True)
     return users[0], users[-1]
 
+async def users_with_min_point_difference(db: AsyncSession):
+    result = await db.execute(
+        select(models.User.username, func.sum(models.Achievement.points).label('total_points'))
+        .select_from(models.User)
+        .join(models.UserAchievement)
+        .join(models.Achievement)
+        .group_by(models.User.username)
+    )
+    users = result.all()
+    if len(users) < 2:
+        return None, None
+    users.sort(key=lambda x: x.total_points)
+    return users[0], users[1]
+
+
 async def users_with_consistent_achievements(db: AsyncSession):
     result = await db.execute(
         select(models.User.username, models.UserAchievement.timestamp)
