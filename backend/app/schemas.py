@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
 
 class UserBase(BaseModel):
     username: str
@@ -42,3 +42,18 @@ class UserAchievement(UserAchievementBase):
 
     class Config:
         from_attributes = True
+
+class MaxAchievementsResponse(BaseModel):
+    username: str
+    achievement_count: int
+
+class MaxPointsResponse(BaseModel):
+    username: str
+    total_points: int
+
+class PointDifferenceResponse(BaseModel):
+    users: List[str]
+    point_difference: int
+
+class ConsistentAchievementsResponse(BaseModel):
+    consistent_users: List[str]

@@ -45,29 +45,29 @@ async def assign_achievement(user_achievement: schemas.UserAchievementCreate, db
 async def get_user_achievements(user_id: int, db: AsyncSession = Depends(get_db)):
     return await crud.get_user_achievements(db=db, user_id=user_id)
 
-@app.get("/statistics/max-achievements", tags=["Statistics"])
+@app.get("/statistics/max-achievements", response_model=schemas.MaxAchievementsResponse, tags=["Statistics"])
 async def user_with_max_achievements(db: AsyncSession = Depends(get_db)):
     user = await crud.user_with_max_achievements(db=db)
     if not user:
         raise HTTPException(status_code=404, detail="No user found")
     return {"username": user.username, "achievement_count": user.achievement_count}
 
-@app.get("/statistics/max-points", tags=["Statistics"])
+@app.get("/statistics/max-points", response_model=schemas.MaxPointsResponse, tags=["Statistics"])
 async def user_with_max_points(db: AsyncSession = Depends(get_db)):
     user = await crud.user_with_max_points(db=db)
     if not user:
         raise HTTPException(status_code=404, detail="No user found")
     return {"username": user.username, "total_points": user.total_points}
 
-@app.get("/statistics/max-point-difference", tags=["Statistics"])
+@app.get("/statistics/max-point-difference", response_model=schemas.PointDifferenceResponse, tags=["Statistics"])
 async def users_with_max_point_difference(db: AsyncSession = Depends(get_db)):
     max_user, min_user = await crud.users_with_max_point_difference(db=db)
     if not max_user or not min_user:
         raise HTTPException(status_code=404, detail="No users found")
     max_diff = max_user.total_points - min_user.total_points
-    return {"users": (max_user.username, min_user.username), "point_difference": max_diff}
+    return {"users": [max_user.username, min_user.username], "point_difference": max_diff}
 
-@app.get("/statistics/consistent-achievements", tags=["Statistics"])
+@app.get("/statistics/consistent-achievements", response_model=schemas.ConsistentAchievementsResponse, tags=["Statistics"])
 async def users_with_consistent_achievements(db: AsyncSession = Depends(get_db)):
     consistent_users = await crud.users_with_consistent_achievements(db=db)
     if not consistent_users:
